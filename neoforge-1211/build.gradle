@@ -1,0 +1,79 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev'
+}
+
+def mcVersion = '1.21.1'
+
+base {
+    archivesName = "${mod_id}-neoforge-${mcVersion}"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+// Include shared MC 1.21.1 sources
+sourceSets.main {
+    java.srcDir rootProject.file('shared/mc1211/java')
+    resources.srcDir rootProject.file('shared/mc1211/resources')
+}
+
+neoForge {
+    version = '21.1.77'
+
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.add(at.absolutePath)
+    }
+
+    parchment {
+        minecraftVersion = '1.21'
+        mappingsVersion = '2024.07.28'
+    }
+
+    runs {
+        configureEach {
+            ideName = "NeoForge ${it.name.capitalize()} 1.21.1"
+        }
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    // Jade (optional, compile-only)
+    compileOnly "maven.modrinth:jade:15.9.2+neoforge"
+}
+
+processResources {
+    var expandProps = [
+        'version'                      : version,
+        'mod_name'                     : mod_name,
+        'mod_id'                       : mod_id,
+        'mod_author'                   : mod_author,
+        'license'                      : license,
+        'description'                  : description,
+        'minecraft_version'            : mcVersion,
+        'minecraft_version_range'      : '[1.21.1, 1.22)',
+        'neoforge_version'             : '21.1.77',
+        'neoforge_loader_version_range': '[4,)',
+        'java_version'                 : '21',
+    ]
+    filesMatching(['pack.mcmeta', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
+        expand expandProps
+    }
+    inputs.properties(expandProps)
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }

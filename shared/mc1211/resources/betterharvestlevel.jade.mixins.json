@@ -1,0 +1,7 @@
+{
+  "required": false,
+  "package": "net.tysontheember.betterharvestlevel.compat.jade.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "minVersion": "0.8"
+}

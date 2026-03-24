@@ -1,0 +1,75 @@
+plugins {
+    id 'multiloader-loader'
+    id 'fabric-loom'
+}
+
+def mcVersion = '1.20.1'
+
+base {
+    archivesName = "${mod_id}-fabric-${mcVersion}"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+// Include shared MC 1.20.1 sources
+sourceSets.main {
+    java.srcDir rootProject.file('shared/mc1201/java')
+    resources.srcDir rootProject.file('shared/mc1201/resources')
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mcVersion}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${mcVersion}:2023.09.03@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:0.15.11"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.92.2+1.20.1"
+
+    // Jade (optional, compile-only)
+    modCompileOnly "maven.modrinth:jade:11.12.3+fabric"
+}
+
+loom {
+    def aw = project(':common').file('src/main/resources/betterharvestlevel.accesswidener')
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    runs {
+        client {
+            client()
+            setConfigName('Fabric 1.20.1 Client')
+            ideConfigGenerated(true)
+            runDir('runs/fabric-1201-client')
+        }
+        server {
+            server()
+            setConfigName('Fabric 1.20.1 Server')
+            ideConfigGenerated(true)
+            runDir('runs/fabric-1201-server')
+        }
+    }
+}
+
+processResources {
+    var expandProps = [
+        'version'              : version,
+        'mod_name'             : mod_name,
+        'mod_id'               : mod_id,
+        'mod_author'           : mod_author,
+        'license'              : license,
+        'description'          : description,
+        'minecraft_version'    : mcVersion,
+        'fabric_loader_version': '0.15.11',
+        'java_version'         : '17',
+    ]
+    filesMatching(['pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
+        expand expandProps
+    }
+    inputs.properties(expandProps)
+}

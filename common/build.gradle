@@ -1,0 +1,48 @@
+plugins {
+    id 'multiloader-common'
+}
+
+// Common module has NO Minecraft dependency - pure Java only.
+// This allows it to be shared across all MC versions and loaders.
+
+base {
+    archivesName = "${mod_id}-common"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+dependencies {
+    // Gson is bundled with Minecraft, but we need it for compilation in the pure-Java common module
+    implementation 'com.google.code.gson:gson:2.10.1'
+    // SLF4J is bundled with Minecraft; we need the API for compilation
+    compileOnly 'org.slf4j:slf4j-api:2.0.9'
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+// Capabilities so loader modules can depend on this
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations."$variant".outgoing {
+        capability("$group:${base.archivesName.get()}:$version")
+        capability("$group:$mod_id:$version")
+    }
+    publishing.publications.configureEach {
+        suppressPomMetadataWarningsFor(variant)
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}
