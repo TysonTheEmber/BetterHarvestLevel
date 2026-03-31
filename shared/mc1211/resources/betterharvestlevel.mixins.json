@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "package": "net.tysontheember.betterharvestlevel.mixin",
   "compatibilityLevel": "JAVA_21",
+  "refmap": "${refmap_name}",
   "mixins": [
     "PlayerMixin",
     "ItemStackMixin"

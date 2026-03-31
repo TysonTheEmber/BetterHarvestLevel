@@ -85,6 +85,7 @@ processResources {
         'forge_version'             : forgeVersion,
         'forge_loader_version_range': '[47,)',
         'java_version'              : '17',
+        'refmap_name'               : 'mixin.refmap.json',
     ]
     filesMatching(['pack.mcmeta', 'META-INF/mods.toml', '*.mixins.json']) {
         expand expandProps

@@ -69,6 +69,7 @@ processResources {
         'neoforge_version'             : '21.1.77',
         'neoforge_loader_version_range': '[4,)',
         'java_version'                 : '21',
+        'refmap_name'                  : "${mod_id}.refmap.json",
     ]
     filesMatching(['pack.mcmeta', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
         expand expandProps
