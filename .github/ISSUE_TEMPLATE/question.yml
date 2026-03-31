@@ -6,6 +6,7 @@ body:
     attributes:
       value: |
         Need help with BetterHarvestLevel? Ask your question below.
+        Check the [documentation](https://tysontheember.dev/better-harvest-level/intro/) first - your answer might already be there!
 
   - type: textarea
     id: question
